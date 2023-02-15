@@ -51,17 +51,20 @@ int main(int argc, char **argv)
        printf("Error! No such directory!\n");
        exit(0);
     }
-    while((filenodir = readdir(d)) != NULL)
-    {
-        if(filenodir->d_type != DT_DIR)
-            {
-               printf("%s ", filenodir->d_name);
-               struct stat buff;
-               stat(filenodir, &buff);
-               time(&buff.st_mtime);
-               printf("Размер - %ld bytes, Время -  %s, Кол-во ссылок - %ld\n",  buff.st_size, ctime(&buff.st_mtime), buff.st_nlink);
-            }
-    }
+   //  while((filenodir = readdir(d)) != NULL)
+   //  {
+   //      if(filenodir->d_type != DT_DIR)
+   //          {
+   //             printf("%s ", filenodir->d_name);
+   //             struct stat buff;
+   //             stat(filenodir, &buff);
+   //             time(&buff.st_mtime);
+   //             printf("Размер - %ld bytes, Время22 -  %s, Кол-во ссылок - %ju\n",  buff.st_size, ctime(&buff.st_mtime), buff.st_nlink);
+   //          }
+   //  }
+    struct stat buff;
+    stat("/home/NSTU/pmi-b0507/upres/lab1/test/file.txt", &buff);
+    printf("Размер - %ld bytes, Время -  %s, Кол-во ссылок - %ju\n",  buff.st_size, ctime(&buff.st_mtime), buff.st_nlink);
     closedir(d);
     return 0;
 
