@@ -1,3 +1,5 @@
 *.o
+*.out
+*.c.swp
 *.txt
 popa
