@@ -55,11 +55,12 @@ int main(int argc, char **argv)
    for (i = 0; i < a; i++) // Вывод файлов
    {
       strcpy(path, "");
-      strcat(path, "./");
+     // strcat(path, "./");
       strcat(path, argv[1]);
       strcat(path, "/");
-      printf("%s ", filenodirs[i]->d_name);
+      //printf("%s ", filenodirs[i]->d_name);
       strcat(path, filenodirs[i]->d_name); // path - полный путь к файлу
+      printf("%s ", filenodirs[i]->d_name);
       struct stat buff;
       stat(path, &buff); // Для получения размера файла, даты изменения и кол-ва внутренних ссылок
       printf("Размер - %ld bytes, Время -  %s, Кол-во ссылок - %ju\n", buff.st_size, ctime(&buff.st_mtime), buff.st_nlink);
