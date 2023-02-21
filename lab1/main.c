@@ -14,8 +14,9 @@ int main(int argc, char **argv)
    char cwd[512];
    char path[50] = ""; // Полный путь файла
    struct dirent *filedir; // Файл
-   struct dirent *filenodirs[50]; // Массив файлов
-   struct dirent *str; // Для алфавитной сортировки
+   //struct dirent *filenodirs[50]; // Массив файлов
+   char *str; // Для алфавитной сортировки
+   char *filenodirs[50];
    int a = 0;
    // struct List *filenodirs;
    if (argv[1] == NULL) // Задана ли директория
@@ -39,14 +40,14 @@ int main(int argc, char **argv)
       }
       if (filedir->d_type != DT_DIR) // Если не директория
       {
-         filenodirs[a] = filedir; // Складываем все файлы в массив лля сортировки
+         filenodirs[a] = filedir->d_name; // Складываем все файлы в массив лля сортировки
          a++;
       }
    }
    int i, j;
    for (i = 1; i < a; i++) // Сортируем файлы в алфавитном порядке
       for (j = 0; j < a - i; j++)
-         if (strcmp(filenodirs[j]->d_name, filenodirs[j + 1]->d_name) > 0)
+         if (strcmp(filenodirs[j], filenodirs[j + 1]) > 0)
          {
             str = filenodirs[j];
             filenodirs[j] = filenodirs[j + 1];
@@ -59,8 +60,8 @@ int main(int argc, char **argv)
       strcat(path, argv[1]);
       strcat(path, "/");
       //printf("%s ", filenodirs[i]->d_name);
-      strcat(path, filenodirs[i]->d_name); // path - полный путь к файлу
-      printf("%s ", filenodirs[i]->d_name);
+      strcat(path, filenodirs[i]); // path - полный путь к файлу
+      printf("%s ", filenodirs[i]);
       struct stat buff;
       stat(path, &buff); // Для получения размера файла, даты изменения и кол-ва внутренних ссылок
       printf("Размер - %ld bytes, Время -  %s, Кол-во ссылок - %ju\n", buff.st_size, ctime(&buff.st_mtime), buff.st_nlink);
