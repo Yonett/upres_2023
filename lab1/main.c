@@ -36,9 +36,9 @@ int main(int argc, char **argv)
    {
       if (filedir->d_type == DT_DIR && filedir->d_name[0] != '.') // Если директория
       {
-         printf("%s\n", filedir->d_name);
+         printf("Directory - %s\n", filedir->d_name);
       }
-      if (filedir->d_type != DT_DIR) // Если не директория
+      if (filedir->d_type != DT_DIR && filedir->d_name[0] != '.') // Если не директория
       {
          filenodirs[a] = filedir->d_name; // Складываем все файлы в массив лля сортировки
          a++;
@@ -61,10 +61,10 @@ int main(int argc, char **argv)
       strcat(path, "/");
       //printf("%s ", filenodirs[i]->d_name);
       strcat(path, filenodirs[i]); // path - полный путь к файлу
-      printf("%s ", filenodirs[i]);
+      printf("File - %s\n", filenodirs[i]);
       struct stat buff;
       stat(path, &buff); // Для получения размера файла, даты изменения и кол-ва внутренних ссылок
-      printf("Размер - %ld bytes, Время -  %s, Кол-во ссылок - %ju\n", buff.st_size, ctime(&buff.st_mtime), buff.st_nlink);
+      printf("Size - %ld bytes\nTime -  %sLinks - %ju\n", buff.st_size, ctime(&buff.st_mtime), buff.st_nlink);
    }
    closedir(d);
    return 0;

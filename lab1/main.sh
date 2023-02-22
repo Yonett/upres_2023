@@ -15,7 +15,7 @@ then
         do
             if [ -d $file ]
             then
-                echo $file
+                printf 'Directory - %s\n' "$(basename $file)"
             fi
         done
 
@@ -23,7 +23,8 @@ then
         do
             if [ -f $file ]
             then
-                echo $(stat --format="%n %s %y %h" $file)
+                printf 'File - %s\n' "$(basename $file)"
+                printf '%s\n' "$(stat --printf="Size - %s bytes\nTime - %y\nLinks - %h" $file)"
             fi
         done
     else
