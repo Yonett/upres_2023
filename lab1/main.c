@@ -10,62 +10,61 @@
 
 int main(int argc, char **argv)
 {
-   DIR *d; //
-   char cwd[512];
-   char path[50] = ""; // Полный путь файла
-   struct dirent *filedir; // Файл
-   //struct dirent *filenodirs[50]; // Массив файлов
-   char *str; // Для алфавитной сортировки
+   struct dirent *filedir;
+
+   DIR *d;
+
+   char path[50];
    char *filenodirs[50];
-   int a = 0;
-   // struct List *filenodirs;
-   if (argv[1] == NULL) // Задана ли директория
+   char *str;
+
+   int files_count = 0;
+
+   if (argc != 2)
    {
-      printf("Error! Directory no specified!\n");
+      printf("Error! Wrong number of arguments (expected 1, given %d).\n", --argc);
       exit(0);
    }
-   d = opendir(argv[1]);
 
-   if (!d) // Существует ли директория
+   d = opendir(argv[1]);
+   if (!d)
    {
-      printf("Error! No such directory!\n");
+      printf("Error! %s is not a directory!\n", argv[1]);
+      closedir(d);
       exit(0);
    }
 
    while ((filedir = readdir(d)) != NULL) // Чтение файлов из заданной директории
-   {
-      if (filedir->d_type == DT_DIR && filedir->d_name[0] != '.') // Если директория
-      {
-         printf("Directory - %s\n", filedir->d_name);
-      }
-      if (filedir->d_type != DT_DIR && filedir->d_name[0] != '.') // Если не директория
-      {
-         filenodirs[a] = filedir->d_name; // Складываем все файлы в массив лля сортировки
-         a++;
-      }
-   }
+      if (filedir->d_name[0] != '.')
+         if (filedir->d_type == DT_DIR)
+            printf("Directory - %s\n", filedir->d_name);
+         else
+         {
+            filenodirs[files_count] = filedir->d_name; // Складываем все файлы в массив лля сортировки
+            files_count++;
+         }
+
    int i, j;
-   for (i = 1; i < a; i++) // Сортируем файлы в алфавитном порядке
-      for (j = 0; j < a - i; j++)
+   for (i = 1; i < files_count; i++) // Сортируем файлы в алфавитном порядке
+      for (j = 0; j < files_count - i; j++)
          if (strcmp(filenodirs[j], filenodirs[j + 1]) > 0)
          {
             str = filenodirs[j];
             filenodirs[j] = filenodirs[j + 1];
             filenodirs[j + 1] = str;
          }
-   for (i = 0; i < a; i++) // Вывод файлов
+
+   printf("\n");
+
+   for (i = 0; i < files_count; i++)
    {
-      strcpy(path, "");
-     // strcat(path, "./");
-      strcat(path, argv[1]);
-      strcat(path, "/");
-      //printf("%s ", filenodirs[i]->d_name);
-      strcat(path, filenodirs[i]); // path - полный путь к файлу
+      sprintf(path, "%s/%s", argv[1], filenodirs[i]);
       printf("File - %s\n", filenodirs[i]);
       struct stat buff;
-      stat(path, &buff); // Для получения размера файла, даты изменения и кол-ва внутренних ссылок
-      printf("Size - %ld bytes\nTime -  %sLinks - %ju\n", buff.st_size, ctime(&buff.st_mtime), buff.st_nlink);
+      stat(path, &buff);
+      printf("Size - %ld bytes\nTime -  %sLinks - %ju\n\n", buff.st_size, ctime(&buff.st_mtime), buff.st_nlink);
    }
+
    closedir(d);
    return 0;
 }
