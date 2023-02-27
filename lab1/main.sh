@@ -19,17 +19,19 @@ then
             fi
         done
 
+        printf '\n'
+
         for file in $path
         do
             if [ -f $file ]
             then
                 printf 'File - %s\n' "$(basename $file)"
-                printf '%s\n' "$(stat --printf="Size - %s bytes\nTime - %y\nLinks - %h" $file)"
+                printf '%s\n\n' "$(stat --printf="Size - %s bytes\nTime - %y\nLinks - %h" $file)"
             fi
         done
     else
-        echo "$1 is not a directory"
+        printf '%s is not a directory' "$1"
     fi
 else
-    echo "Wrong number of arguments (expected 1, given $#)"
+    printf 'Wrong number of arguments (expected 1, given %d)' "$#"
 fi

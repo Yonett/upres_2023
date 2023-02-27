@@ -8,17 +8,33 @@
 #include <sys/stat.h>
 #include <time.h>
 
+void sortNames(char *array[], int size)
+{
+   char *str;
+   int i, j;
+
+   for (i = 1; i < size; i++)
+      for (j = 0; j < size - i; j++)
+         if (strcmp(array[j], array[j + 1]) > 0)
+         {
+            str = array[j];
+            array[j] = array[j + 1];
+            array[j + 1] = str;
+         }
+}
+
 int main(int argc, char **argv)
 {
-   struct dirent *filedir;
+   struct dirent *dirElement;
 
    DIR *d;
 
    char path[50];
-   char *filenodirs[50];
+   char *files[50];
    char *str;
 
-   int files_count = 0;
+   int filesCount = 0;
+   int i;
 
    if (argc != 2)
    {
@@ -34,32 +50,24 @@ int main(int argc, char **argv)
       exit(0);
    }
 
-   while ((filedir = readdir(d)) != NULL) // Чтение файлов из заданной директории
-      if (filedir->d_name[0] != '.')
-         if (filedir->d_type == DT_DIR)
-            printf("Directory - %s\n", filedir->d_name);
+   while ((dirElement = readdir(d)) != NULL) // Чтение файлов из заданной директории
+      if (dirElement->d_name[0] != '.')
+         if (dirElement->d_type == DT_DIR)
+            printf("Directory - %s\n", dirElement->d_name);
          else
          {
-            filenodirs[files_count] = filedir->d_name; // Складываем все файлы в массив лля сортировки
-            files_count++;
+            files[filesCount] = dirElement->d_name; // Складываем все файлы в массив лля сортировки
+            filesCount++;
          }
 
-   int i, j;
-   for (i = 1; i < files_count; i++) // Сортируем файлы в алфавитном порядке
-      for (j = 0; j < files_count - i; j++)
-         if (strcmp(filenodirs[j], filenodirs[j + 1]) > 0)
-         {
-            str = filenodirs[j];
-            filenodirs[j] = filenodirs[j + 1];
-            filenodirs[j + 1] = str;
-         }
+   sortNames(files, filesCount);
 
    printf("\n");
 
-   for (i = 0; i < files_count; i++)
+   for (i = 0; i < filesCount; i++)
    {
-      sprintf(path, "%s/%s", argv[1], filenodirs[i]);
-      printf("File - %s\n", filenodirs[i]);
+      sprintf(path, "%s/%s", argv[1], files[i]);
+      printf("File - %s\n", files[i]);
       struct stat buff;
       stat(path, &buff);
       printf("Size - %ld bytes\nTime -  %sLinks - %ju\n\n", buff.st_size, ctime(&buff.st_mtime), buff.st_nlink);
