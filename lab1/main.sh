@@ -30,8 +30,8 @@ then
             fi
         done
     else
-        printf '%s is not a directory' "$1"
+        printf '%s cannot be opened.' "$1"
     fi
 else
-    printf 'Wrong number of arguments (expected 1, given %d)' "$#"
+    printf 'Wrong number of arguments (expected 1, given %d).' "$#"
 fi
