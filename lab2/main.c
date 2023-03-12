@@ -13,7 +13,7 @@ int main(int argc, char** argv)
     if (argc != 3)
     {
       fprintf(stderr, "Error! Wrong number of arguments (expected 2, given %d).\n", --argc);
-      exit(0);
+      exit(1);
     }
 
     pid_t pid1 = fork();
