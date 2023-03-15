@@ -30,8 +30,8 @@ then
             fi
         done
     else
-        printf '%s cannot be opened.' "$1"
+        printf 'Error! %s cannot be opened.\n' "$1"
     fi
 else
-    printf 'Wrong number of arguments (expected 1, given %d).' "$#"
+    printf 'Error! Wrong number of arguments (expected 1, given %d).\n' "$#"
 fi

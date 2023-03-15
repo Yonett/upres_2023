@@ -93,7 +93,7 @@ int main(int argc, char** argv)
    for (i = 0; i < filesCount; i++)
    {
       printf("%s\n", regularFiles[i].name);
-      printf("Size - %ld bytes\nTime -  %sLinks - %ju\n\n",
+      printf("Size - %ld bytes\nTime - %sLinks - %ju\n\n",
             regularFiles[i].st_size,
             ctime(&regularFiles[i].time),
             regularFiles[i].st_nlink); //Печатаем нужную информацию о файле.
