@@ -9,8 +9,8 @@
 #include <time.h>
 
 /**
- * Структура, которая содержит нужную по заданию
- * информацию о файле
+ * Вспомогательная структура, которая содержит
+ * нужную по заданию информацию о файле.
 **/
 struct file_info
 {
@@ -21,8 +21,8 @@ struct file_info
 };
 
 /**
- * Функция сортирует массив строк в алфавитном порядке
- * при помощи сортировки пузырьком.
+ * Функция сортирует массив вспомогательных структур по имени
+ * в алфавитном порядке при помощи сортировки пузырьком.
  * @param array Массив, который нужно отсортировать.
  * @param size Размер массива.
  **/
@@ -57,7 +57,7 @@ int main(int argc, char** argv)
    if (argc != 2)
    {
       fprintf(stderr, "Error! Wrong number of arguments (expected 1, given %d).\n", --argc);
-      exit(1);
+      exit(EXIT_FAILURE);
    }
 
    d = opendir(argv[1]);
@@ -65,7 +65,7 @@ int main(int argc, char** argv)
    {
       fprintf(stderr, "Error! %s cannot be opened.\n", argv[1]);
       closedir(d);
-      exit(1);
+      exit(EXIT_FAILURE);
    }
 
    while ((dirElement = readdir(d)) != NULL) // Чтение файлов из заданной директории.
@@ -77,6 +77,7 @@ int main(int argc, char** argv)
             printf("Directory - %s\n", dirElement->d_name); //Печать имени файла.
          else if (S_ISREG(buff.st_mode)) //Проверка является ли файл директорией.
          {
+            //Заносим информацию о файле в массив.
             regularFiles[filesCount].name = dirElement->d_name;
             regularFiles[filesCount].st_size = buff.st_size;
             regularFiles[filesCount].time = buff.st_mtime;
@@ -86,7 +87,7 @@ int main(int argc, char** argv)
          }
       }
 
-   sortInfos(regularFiles, filesCount); //Сортируем массив структур информациии о файле по алфавиту.
+   sortInfos(regularFiles, filesCount); //Сортируем массив структур по алфавиту.
    printf("\n");
 
    for (i = 0; i < filesCount; i++)
