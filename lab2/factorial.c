@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 #include <time.h>
 
 /**
@@ -26,49 +27,46 @@ int main(int argc, char** argv)
 {
     if (argc == 1)
     {
-        int n;
+        int n, fd, result;
         char *endptr;
 
         n = strtol(argv[0], &endptr, 10);
         if (*endptr != '\0')
         {
-            printf("Error! Cannot convert fisrt argument (%s) to integer.\n", argv[1]);
-            exit(0);
+            fprintf(stderr, "Error! ProcessN cannot convert fisrt argument (%s) to integer.\n", argv[0]);
+            truncate("data", 0);
+            return(EXIT_FAILURE);
         }
 
-        FILE *file;
-        file = fopen("data", "w");
-        fprintf(file, "%d\n", factorial(n));
-        fclose(file);
+        result = factorial(n);
+        fd = open("data", O_TRUNC | O_WRONLY);
+        write(fd, &result, sizeof(int));
+        close(fd);
     }
     else if (argc == 2)
     {
-        int n, m;
+        int n, m, fd, result;
         char *endptr;
 
         n = strtol(argv[0], &endptr, 10);
         if (*endptr != '\0')
         {
-            printf("Error! Cannot convert fisrt argument (%s) to integer.\n", argv[1]);
-            exit(0);
+            fprintf(stderr, "Error! ProcessNM cannot convert fisrt argument (%s) to integer.\n", argv[0]);
+            exit(EXIT_FAILURE);
         }
 
         m = strtol(argv[1], &endptr, 10);
         if (*endptr != '\0')
         {
-            printf("Error! Cannot convert second argument (%s) to integer.\n", argv[2]);
-            exit(0);
+            fprintf(stderr, "Error! ProcessNM cannot convert second argument (%s) to integer.\n", argv[1]);
+            truncate("data", 0);
+            exit(EXIT_FAILURE);
         }
 
-        FILE *file;
-        file = fopen("data", "a");
-        fprintf(file, "%d\n", factorial(n-m));
-        fclose(file);
-    }
-    else
-    {
-        printf("Error! Wrong number of arguments (expected 2 or 1, given %d).", argc);
-        exit(0);
+        result = factorial(n - m);
+        fd = open("data", O_WRONLY | O_APPEND);
+        write(fd, &result, sizeof(int));
+        close(fd);
     }
     return 0;
 }

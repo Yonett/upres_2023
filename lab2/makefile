@@ -10,3 +10,4 @@ all: main.c factorial.c
 	
 clean:
 	rm main.o
+	rm factorial.o
