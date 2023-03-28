@@ -31,7 +31,7 @@ int main(int argc, char** argv)
         n = strtol(argv[0], &endptr, 10); //Конвертирование строки с аргументом к типу integer.
         if (*endptr != '\0')
         {
-            fprintf(stderr, "Error! ProcessN cannot convert fisrt argument (%s) to integer.\n", argv[0]);
+            fprintf(stderr, "Error! ProcessN cannot convert first argument (%s) to integer.\n", argv[0]);
             return(EXIT_FAILURE);
         }
 
@@ -48,7 +48,7 @@ int main(int argc, char** argv)
         n = strtol(argv[0], &endptr, 10); //Конвертирование строки с первым аргументом к типу integer.
         if (*endptr != '\0')
         {
-            fprintf(stderr, "Error! ProcessNM cannot convert fisrt argument (%s) to integer.\n", argv[0]);
+            fprintf(stderr, "Error! ProcessNM cannot convert first argument (%s) to integer.\n", argv[0]);
             exit(EXIT_FAILURE);
         }
 
