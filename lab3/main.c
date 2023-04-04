@@ -90,7 +90,6 @@ int main(int argc, char** argv)
 
             write(k1[1], &pid, sizeof(int)); //Отправка сообщения через канал
             write(k1[1], &msg, 40);
-
             while(true)
                 read(bf, &number, sizeof(int)); //Чтение из файла, пока процесс не получит сигнал
         }
