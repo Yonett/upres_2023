@@ -11,20 +11,36 @@
 int main(int argc, char** argv)
 {
     // P0 выполняет "wc -w"
-
+    printf("P0 is created\n");
     int fd1[2], status;
-    pipe(fd1); //Канал для общения между P0 и P1
+    if (pipe(fd1) == -1) //Канал для общения между P0 и P1
+    {
+        printf("Cannot create pipe(fd1)\n");
+        exit(EXIT_FAILURE);
+    }
+    else
+        printf("Pipe(fd1) is created\n");
 
     if (fork() == 0)
     {
         // P1 выполняет "tr -d [0-9]"
 
+        printf("P1 is created\n");
+
         int fd2[2];
-        pipe(fd2); // Канал для общения между P1 и P2
+        if (pipe(fd2) == -1) //Канал для общения между P1 и P2
+        {
+            printf("Cannot create pipe(fd2)\n");
+            exit(EXIT_FAILURE);
+        }
+        else
+            printf("Pipe(fd2) is created\n");
 
         if (fork() == 0)
         {
             // P2 выполняет "cat a.txt b.txt c.txt"
+
+            printf("P2 is created\n");
 
             close(fd1[0]); //
             close(fd1[1]); // Закрытие не используемых декрипторов
@@ -41,11 +57,15 @@ int main(int argc, char** argv)
 
         wait(&status);
 
+        printf("P2 is finished\n");
+
         if (status != EXIT_SUCCESS)
         {
             fprintf(stderr, "Error! Cannot execute cat\n");
             exit(EXIT_FAILURE);
         }
+        else
+            printf("cat executed successfully\n");
 
         close(fd1[0]); //
         close(fd2[1]); // Закрытие не используемых декрипторов
@@ -65,11 +85,15 @@ int main(int argc, char** argv)
 
     wait(&status);
 
+    printf("P1 is finished\n");
+
     if (status != EXIT_SUCCESS)
     {
         fprintf(stderr, "Error! Cannot execute tr\n");
         exit(EXIT_FAILURE);
     }
+    else
+            printf("tr executed successfully\n");
 
     close(fd1[1]); // Закрытие неиспользуемого дескриптора
 
