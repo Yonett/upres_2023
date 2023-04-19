@@ -10,10 +10,11 @@
 
 int main(int argc, char** argv)
 {
-    // P0 выполняет "wc -w"
-    printf("P0 is created\n");
-    int fd1[2], status;
-    if (pipe(fd1) == -1) //Канал для общения между P0 и P1
+
+    int fd1[2];
+    int fd2[2];
+
+    if (pipe(fd1) == -1) //Канал для общения между P2 и P3
     {
         printf("Cannot create pipe(fd1)\n");
         exit(EXIT_FAILURE);
@@ -21,51 +22,38 @@ int main(int argc, char** argv)
     else
         printf("Pipe(fd1) is created\n");
 
-    if (fork() == 0)
-    {
-        // P1 выполняет "tr -d [0-9]"
-
-        printf("P1 is created\n");
-
-        int fd2[2];
-        if (pipe(fd2) == -1) //Канал для общения между P1 и P2
+    if (pipe(fd2) == -1) //Канал для общения между P1 и P2
         {
             printf("Cannot create pipe(fd2)\n");
             exit(EXIT_FAILURE);
         }
-        else
-            printf("Pipe(fd2) is created\n");
+    else
+        printf("Pipe(fd2) is created\n");
 
-        if (fork() == 0)
-        {
-            // P2 выполняет "cat a.txt b.txt c.txt"
+    if (fork() == 0)
+    {
+        // P1 выполняет "cat a.txt b.txt c.txt"
 
-            printf("P2 is created\n");
+        printf("P1 is created\n");
 
-            close(fd1[0]); //
-            close(fd1[1]); // Закрытие не используемых декрипторов
-            close(fd2[0]); //
+        close(fd1[0]); //
+        close(fd1[1]); // Закрытие не используемых декрипторов
+        close(fd2[0]); //
 
-            close(1); // Закрытие стандартного вывода
-            dup(fd2[1]); // Переназначение стандартного вывода дескриптором записи канала fd2
-            close(fd2[1]); // Закрытие старого дескриптора записи канала fd2
+        close(1); // Закрытие стандартного вывода
+        dup(fd2[1]); // Переназначение стандартного вывода дескриптором записи канала fd2
+        close(fd2[1]); // Закрытие старого дескриптора записи канала fd2
 
-            if (execl("/bin/cat", "cat", "a.txt", "b.txt", "c.txt", NULL) == -1)
-                exit(EXIT_FAILURE);
-            exit(EXIT_SUCCESS);
-        }
-
-        wait(&status);
-
-        printf("P2 is finished\n");
-
-        if (status != EXIT_SUCCESS)
-        {
-            fprintf(stderr, "Error! Cannot execute cat\n");
+        if (execl("/bin/cat", "cat", "a.txt", "b.txt", "c.txt", NULL) == -1)
             exit(EXIT_FAILURE);
-        }
-        else
-            printf("cat executed successfully\n");
+        exit(EXIT_SUCCESS);
+    }
+
+    if (fork() == 0)
+    {
+        // P2 выполняет "tr -d [0-9]"
+
+        printf("P2 is created\n");
 
         close(fd1[0]); //
         close(fd2[1]); // Закрытие не используемых декрипторов
@@ -83,28 +71,24 @@ int main(int argc, char** argv)
         exit(EXIT_SUCCESS);
     }
 
-    wait(&status);
-
-    printf("P1 is finished\n");
-
-    if (status != EXIT_SUCCESS)
+    if (fork() == 0)
     {
-        fprintf(stderr, "Error! Cannot execute tr\n");
-        exit(EXIT_FAILURE);
+        // P3 выполняет "wc -w"
+
+        printf("P3 is created\n");
+
+        close(fd1[1]); // Закрытие неиспользуемого дескриптора
+        close(fd2[0]); // Закрытие неиспользуемого дескриптора
+        close(fd2[1]); // Закрытие неиспользуемого дескриптора
+
+        close(0); // Закрытие стандартного ввода
+        dup(fd1[0]); // Переназначение стандартного ввода дескриптором чтения канала fd1
+        close(fd1[0]); // Закрытие старого дескриптора чтения канала fd1
+
+        if (execl("/bin/wc", "wc", "-w", NULL) == -1)
+            exit(EXIT_FAILURE);
+        exit(EXIT_SUCCESS);
     }
-    else
-            printf("tr executed successfully\n");
 
-    close(fd1[1]); // Закрытие неиспользуемого дескриптора
-
-    close(0); // Закрытие стандартного ввода
-    dup(fd1[0]); // Переназначение стандартного ввода дескриптором чтения канала fd1
-    close(fd1[0]); // Закрытие старого дескриптора чтения канала fd1
-
-    if (execl("/bin/wc", "wc", "-w", NULL) == -1)
-    {
-        fprintf(stderr, "Error! Cannot execute wc\n");
-        exit(EXIT_FAILURE);
-    }
     return 0;
 }
